@@ -1,4 +1,6 @@
 import User from "../../Model/userModel.js";
+import Artist from "../../Model/artistModel.js";
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
@@ -50,6 +52,14 @@ export const manageUsers = async (req, res) => {
     console.log(error);
   }
 };
+export const manageArtist = async (req, res) => {
+  try {
+    const artist = await Artist.find();
+    res.status(200).json({ artist });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const manageAction = async (req, res) => {
   try {
@@ -60,6 +70,23 @@ export const manageAction = async (req, res) => {
       { $set: { is_block: !user.is_block } }
     );
     res.status(200).json({ data: user });
+
+    // const action =await User.findOneAndUpdate({_id:})
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const manageArtistAction = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const artist = await Artist.findById(id);
+    const change = await Artist.findOneAndUpdate(
+      { _id: id },
+      { $set: { is_block: !artist.is_block } }
+    );
+    res.status(200).json({ data: artist });
 
     // const action =await User.findOneAndUpdate({_id:})
   } catch (error) {

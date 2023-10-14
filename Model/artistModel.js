@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  is_block: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const Artist = mongoose.model("Artist", userSchema);

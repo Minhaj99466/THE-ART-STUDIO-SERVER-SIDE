@@ -80,6 +80,9 @@ export const artistLogin = async (req, res) => {
     const { email, password } = req.body;
     const exist = await Artist.findOne({ email: email });
     if (exist) {
+      if (exist.is_block === true) {
+        return res.status(200).json({ message: "Artist Is Blocked By Admin" });
+      }
       const passOk = await bcrypt.compare(password, exist.password);
       if (passOk) {
         if (!exist.is_verfied) {
