@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  is_profile:{
+    type:Boolean,
+    default:false
+  },
   is_block: {
     type: Boolean,
     default: false,

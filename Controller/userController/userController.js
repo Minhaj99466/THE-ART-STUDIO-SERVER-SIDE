@@ -58,8 +58,8 @@ export const googleRegister = async (req, res) => {
       });
 
       const userData = await newUser.save().then(console.log("Google Signup"));
-      const token = jwt.sign({ userId: userData._id }, process.env.JWTKEY, {
-        expiresIn: "1h",
+      const token = jwt.sign({ userId: userData._id }, process.env.JWTUSERKEY, {
+        expiresIn: "24h",
       });
       res
         .status(200)
@@ -98,8 +98,8 @@ export const userLogin = async (req, res) => {
             .status(200)
             .json({ message: "An Email SEnt To your account Please verify" });
         }
-        const token = jwt.sign({ userId: exist._id }, process.env.JWTKEY, {
-          expiresIn: "1h",
+        const token = jwt.sign({ userId: exist._id }, process.env.JWTUSERKEY, {
+          expiresIn: "24h",
         });
         res.status(200).json({
           loginSuccess: true,

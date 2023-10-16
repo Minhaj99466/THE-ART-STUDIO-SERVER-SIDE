@@ -15,8 +15,8 @@ export const login = async (req, res) => {
     if (admin.is_admin) {
       const passOk = await bcrypt.compare(password, admin.password);
       if (passOk) {
-        const token = jwt.sign({ adminId: admin._id }, process.env.JWTKEY, {
-          expiresIn: "1h",
+        const token = jwt.sign({ adminId: admin._id }, process.env.JWTADMINKEY, {
+          expiresIn: "24h",
         });
         res
           .status(200)

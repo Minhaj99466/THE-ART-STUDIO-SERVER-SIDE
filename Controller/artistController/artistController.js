@@ -58,8 +58,8 @@ export const googleRegister = async (req, res) => {
         password: hash,
       });
       const artistData = await artist.save();
-      const token = jwt.sign({ artistId: artistData._id }, process.env.JWTKEY, {
-        expiresIn: "1h",
+      const token = jwt.sign({ artistId: artistData._id }, process.env.JWTARTISTKEY, {
+        expiresIn: "24h",
       });
       res
         .status(200)
@@ -104,8 +104,8 @@ export const artistLogin = async (req, res) => {
             .status(200)
             .json({ message: "An Email SEnt To your account Please verify" });
         }
-        const token = jwt.sign({ artistId: exist._id }, process.env.JWTKEY, {
-          expiresIn: "1h",
+        const token = jwt.sign({ artistId: exist._id }, process.env.JWTARTISTKEY, {
+          expiresIn: "24h",
         });
         res
           .status(200)
