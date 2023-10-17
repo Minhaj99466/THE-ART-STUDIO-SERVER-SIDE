@@ -156,3 +156,68 @@ export const verification = async (req, res) => {
     console.log(error);
   }
 };
+
+
+export const passwordMail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const artist = await Artist.findOne({ email: email });
+    if (!artist) {
+      return res.json({ message: "user Not Found" });
+    }
+    if(artist.is_google){return res.json({message:"Please :Go to google and Change Password"})}
+
+    const token = await Token.findOne({ artistId: artist.id });
+    if (token) {
+      return res
+        .status(200)
+        .json({ message: "We Already sent mail  Please Check Your Mail" });
+    }
+
+    const emailToken = await new Token({
+      artistId: artist.id,
+      token: crypto.randomBytes(32).toString("hex"),
+    }).save();
+    const url = `${process.env.BASE_URL}artist/${artist._id}/password/${emailToken.token}`;
+    await sendMail(artist.email, "Verify Email", url);
+    return res.status(200).json({ message: "Mail for password change" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const checkpassword=async(req,res)=>{
+  try {
+    const pass1=req.body.password.password.password
+    const pass2=req.body.password.password.confirmPassword
+    const id=req.body.password.paramId
+
+    const artist =await Artist.find({_id:id})
+    if(!artist){return res.json({message:"Not user found"})}
+   
+    if(pass1===pass2){
+      const hashpass = await bcrypt.hash(pass1, 10);
+      await Artist.findOneAndUpdate({ _id: id }, { $set: { password: hashpass } });
+      return res.json({change:true,message:"Passsword Change success"})
+    }else{
+      return res.json({message:"please check your password"})
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export const profileDetails=async (req,res)=>{
+  try {
+    const id=req.params.id
+    const profileData=await Artist.findOne({email:id})
+
+    if(!profileData){return res.status(400).json({message:"no profile"})}
+    return res.status(200).json({message:"user profile",profileData})
+  } catch (error) {
+    console.log(error);
+  }
+}
