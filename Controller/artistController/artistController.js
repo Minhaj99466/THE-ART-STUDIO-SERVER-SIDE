@@ -221,3 +221,13 @@ export const profileDetails=async (req,res)=>{
     console.log(error);
   }
 }
+
+
+export const addProfile=async(req,res)=>{
+  try {
+    console.log("uhghkkkkkkkkkkkkkkkkj");
+    console.log(req.file);
+  } catch (error) {
+    console.log(error);
+  }
+}
