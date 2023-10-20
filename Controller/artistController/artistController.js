@@ -4,6 +4,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import sendMail from "../../utils/sendMail.js";
+import {
+  uploadToCloudinary,
+} from "../../utils/cloudinary.js";
 
 export const registration = async (req, res) => {
   try {
@@ -225,8 +228,41 @@ export const profileDetails=async (req,res)=>{
 
 export const addProfile=async(req,res)=>{
   try {
-    console.log("uhghkkkkkkkkkkkkkkkkj");
-    console.log(req.file);
+    const artistId=req.params.id
+    console.log(req.body);
+    const {
+      category,
+      experience,
+      place,
+      number,
+      description,
+    } = req.body;
+    const uploadedImages = await uploadToCloudinary(
+      req.file.path,
+      "dp"
+    );
+
+    const updatedArtist = await Artist.updateOne(
+      { email: artistId },
+      {
+        $set: {
+          category: category,
+          experience: experience,
+          place: place,
+          mobile: number,
+          description: description,
+          displaypicture: uploadedImages.url,
+          requested: true,
+          is_profile:true
+        },
+      }
+    );
+    if (updatedArtist) {
+      return res.status(200).json({created:true, data: updatedArtist, message: "updated" });
+    } else {
+      return res.status(200).json({ message: "updation failed" });
+    }
+
   } catch (error) {
     console.log(error);
   }

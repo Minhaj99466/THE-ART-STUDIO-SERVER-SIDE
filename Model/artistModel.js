@@ -28,14 +28,38 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  is_profile:{
-    type:Boolean,
-    default:false
+  is_profile: {
+    type: Boolean,
+    default: false,
   },
   is_block: {
     type: Boolean,
     default: false,
-  }
+  },
+  requested: {
+    type: Boolean,
+    default: false,
+  },
+  experience: {
+    type: Number,
+  },
+  description: {
+    type: String,
+  },
+  place: {
+    type: String,
+  },
+  mobile: {
+    type: String,
+  },
+  category: {
+    type: Array,
+  },
+ 
+  displaypicture: {
+    type: String,
+    default: "",
+  },
 });
 
 const Artist = mongoose.model("Artist", userSchema);
