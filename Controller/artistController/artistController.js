@@ -267,3 +267,45 @@ export const addProfile=async(req,res)=>{
     console.log(error);
   }
 }
+
+export const editProfile=async (req,res)=>{
+ 
+      try {
+        const artistId=req.params.id
+        const {
+          name,
+          category,
+          experience,
+          number,
+          description,
+        } = req.body;
+        const uploadedImages = await uploadToCloudinary(
+          req.file.path,
+          "dp"
+        );
+    
+        const updatedArtist = await Artist.updateOne(
+          { email: artistId },
+          {
+            $set: {
+              name:name,
+              category: category,
+              experience: experience,
+              mobile: number,
+              description: description,
+              displaypicture: uploadedImages.url,
+              requested: true,
+              is_profile:true
+            },
+          }
+        );
+        if (updatedArtist) {
+          return res.status(200).json({created:true, data: updatedArtist, message: "updated" });
+        } else {
+          return res.status(200).json({ message: "updation failed" });
+        }
+    
+  } catch (error) {
+    console.log(error);
+  }
+}

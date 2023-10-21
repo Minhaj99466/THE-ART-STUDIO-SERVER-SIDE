@@ -18,10 +18,10 @@ export const adminAuth = async (req, res, next) => {
       if(admin){
         next();
       }else{
-        return res.status(400).json({message:"user not authorised or invalid user"})
+        return res.status(403).json({message:"user not authorised or invalid user"})
       }
     }else{
-        return res.status(400).json({message:"user not authorised"})
+        return res.status(403).json({message:"user not authorised"})
     }
   } catch (error) {
     console.log(error);

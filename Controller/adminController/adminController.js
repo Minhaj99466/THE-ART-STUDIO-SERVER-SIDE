@@ -47,7 +47,7 @@ export const login = async (req, res) => {
 export const manageUsers = async (req, res) => {
   try {
     const users = await User.find({ is_admin: false });
-    res.status(200).json({ users });
+    res.status(200).json({message:true, users });
   } catch (error) {
     console.log(error);
   }
