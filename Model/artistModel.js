@@ -55,10 +55,16 @@ const userSchema = new mongoose.Schema({
   category: {
     type: String,
   },
- 
   displaypicture: {
     type: String,
     default: "",
+  },
+  posts: {
+    type: Array,
+  },
+  status: {
+    type: String,
+    default: "pending",
   },
 });
 

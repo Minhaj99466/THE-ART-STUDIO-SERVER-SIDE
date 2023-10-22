@@ -17,22 +17,21 @@ const uploadToCloudinary = async (path , folder) => {
       }
   }
 
-//   const MultiUploadCloudinary = async (files, folder) => {
-//     try {
-//         const uploadedImages = [];
-//         for (const file of files) {
-//             const { path } = file;
-//             const result = await uploadToCloudinary(path, folder); 
+  const MultiUploadCloudinary = async (files, folder) => {
+    try {
+        const uploadedImages = [];
+        for (const file of files) {
+            const { path } = file;
+            const result = await uploadToCloudinary(path, folder); 
+            if (result.url) {
+                uploadedImages.push(result.url);
+            }
+        }
+        return uploadedImages;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
 
-//             if (result.url) {
-//                 uploadedImages.push(result.url);
-//             }
-//         }
-//         return uploadedImages;
-//     } catch (error) {
-//         console.log(error);
-//         throw error;
-//     }
-// };
-
-export {uploadToCloudinary}
+export {uploadToCloudinary,MultiUploadCloudinary}

@@ -2,7 +2,7 @@ import express from 'express'
 
 
 const artistRoute=express()
-import { registration,googleRegister,artistLogin,verification,passwordMail,checkpassword,profileDetails,addProfile,editProfile } from '../../Controller/artistController/artistController.js'
+import { registration,googleRegister,artistLogin,verification,passwordMail,checkpassword,profileDetails,addProfile,editProfile,postImages } from '../../Controller/artistController/artistController.js'
 import upload from '../../MiddleWares/multer.js'
 
 
@@ -16,6 +16,7 @@ artistRoute.get('/artist/:id/verify/:token',verification)
 artistRoute.put('/addProfile/:id',upload.single('dp'),addProfile)
 
 artistRoute.put('/editProfile/:id',upload.single('dp'),editProfile)
+artistRoute.put('/postImages/:id',upload.array("images",3),postImages)
 
 artistRoute.get('/profiledetails/:id',profileDetails)
 artistRoute.post('/addProfile',addProfile)

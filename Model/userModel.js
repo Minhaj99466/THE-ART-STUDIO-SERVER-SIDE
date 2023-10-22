@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  seenNotifications:{
+    type:Array,
+    default:[]
+  },
+  UnseenNotifications:{
+    type:Array,
+    default:[]
+  },
   is_google:{
     type:Boolean,
     default:false

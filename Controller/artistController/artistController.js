@@ -6,6 +6,7 @@ import crypto from "crypto";
 import sendMail from "../../utils/sendMail.js";
 import {
   uploadToCloudinary,
+  MultiUploadCloudinary
 } from "../../utils/cloudinary.js";
 
 export const registration = async (req, res) => {
@@ -308,4 +309,37 @@ export const editProfile=async (req,res)=>{
   } catch (error) {
     console.log(error);
   }
+}
+
+
+
+export const postImages=async (req,res)=>{
+ 
+  try {
+    const artistId=req.params.id
+
+    const uploadedImages = await MultiUploadCloudinary(
+      req.files,
+      "images"
+    );
+    const updatedArtist = await Artist.updateOne(
+      { email: artistId },
+      {
+        $push: {
+          posts: { $each: uploadedImages },
+        },
+        $set: {
+          is_posts: true,
+        },
+      }
+    );
+    if (updatedArtist) {
+      return res.status(200).json({created:true, data: updatedArtist, message: "updated" });
+    } else {
+      return res.status(200).json({ message: "updation failed" });
+    }
+
+} catch (error) {
+console.log(error);
+}
 }
