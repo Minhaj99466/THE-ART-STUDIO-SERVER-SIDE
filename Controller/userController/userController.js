@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import Token from "../../Model/token.js";
 import sendMail from "../../utils/sendMail.js";
 import crypto from "crypto";
+import Artist from "../../Model/artistModel.js";
 
 export const registration = async (req, res) => {
   try {
@@ -191,6 +192,18 @@ export const checkpassword=async(req,res)=>{
     }else{
       return res.json({message:"please check your password"})
     }
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const allArtists=async(req,res)=>{
+  try {
+      const Artists=await Artist.find({is_Confirm:true})
+      if(!Artists){return res.status(400).json({message:"no artist here"})}
+
+      return res.status(200).json({Artists})
 
   } catch (error) {
     console.log(error);

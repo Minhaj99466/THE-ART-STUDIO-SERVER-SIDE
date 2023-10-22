@@ -93,3 +93,55 @@ export const manageArtistAction = async (req, res) => {
     console.log(error);
   }
 };
+
+
+export const notVerified = async (req, res, next) => {
+  try {
+    const notVerified = await Artist.find({ is_Confirm:false, requested: true });
+    if (notVerified) {
+      return res.status(200).json({ data: notVerified });
+    } else {
+      return res.status(200).json({ message: "Data not found" });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const getArtist = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = await Artist.findById(id);
+    if (data) {
+      return res.status(200).json({ data: data });
+    } else {
+      return res.status(200).json({ message: "Data not found" });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+
+export const verifyArtist = async (req, res, next) => {
+  try {
+    console.log("verifyArtist");
+    const id = req.params.id;
+    const verified = await Artist.findOneAndUpdate(
+      { _id: id },
+      { $set: { is_Confirm: true } }
+    );
+    if (verified) {
+      return res
+        .status(200)
+        .json({ verified: true, message: "doctor vrification Success" });
+    } else {
+      return res
+        .status(200)
+        .json({ created: false, message: "doctor verification failed" });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
