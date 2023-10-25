@@ -2,8 +2,13 @@ import express from 'express'
 
 
 const artistRoute=express()
-import { registration,googleRegister,artistLogin,verification,passwordMail,checkpassword,profileDetails,addProfile,editProfile,postImages } from '../../Controller/artistController/artistController.js'
+import { profileDetails,addProfile,editProfile,postImages  } from '../../Controller/artistController/artistController.js'
+
 import upload from '../../MiddleWares/multer.js'
+import { artistLogin, checkpassword, googleRegister, passwordMail, registration, verification } from '../../Controller/artistController/authController.js'
+
+
+
 
 
 

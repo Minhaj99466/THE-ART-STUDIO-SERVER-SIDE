@@ -55,7 +55,7 @@ export const googleRegister = async (req, res) => {
         name: name,
         email: email,
         password: hashpass,
-        is_google:true
+        is_google: true,
       });
 
       const userData = await newUser.save().then(console.log("Google Signup"));
@@ -153,7 +153,9 @@ export const passwordMail = async (req, res) => {
     if (!user) {
       return res.json({ message: "user Not Found" });
     }
-    if(user.is_google){return res.json({message:"Please :Go to google and Change Password"})}
+    if (user.is_google) {
+      return res.json({ message: "Please :Go to google and Change Password" });
+    }
 
     const token = await Token.findOne({ userId: user.id });
     if (token) {
@@ -174,38 +176,41 @@ export const passwordMail = async (req, res) => {
   }
 };
 
-
-
-export const checkpassword=async(req,res)=>{
+export const checkpassword = async (req, res) => {
   try {
-    const pass1=req.body.password.password.password
-    const pass2=req.body.password.password.confirmPassword
-    const id=req.body.password.paramId
+    const pass1 = req.body.password.password.password;
+    const pass2 = req.body.password.password.confirmPassword;
+    const id = req.body.password.paramId;
 
-    const user =await User.find({_id:id})
-    if(!user){return res.json({message:"Not user found"})}
-   
-    if(pass1===pass2){
-      const hashpass = await bcrypt.hash(pass1, 10);
-      await User.findOneAndUpdate({ _id: id }, { $set: { password: hashpass } });
-      return res.json({change:true,message:"Passsword Change success"})
-    }else{
-      return res.json({message:"please check your password"})
+    const user = await User.find({ _id: id });
+    if (!user) {
+      return res.json({ message: "Not user found" });
     }
 
+    if (pass1 === pass2) {
+      const hashpass = await bcrypt.hash(pass1, 10);
+      await User.findOneAndUpdate(
+        { _id: id },
+        { $set: { password: hashpass } }
+      );
+      return res.json({ change: true, message: "Passsword Change success" });
+    } else {
+      return res.json({ message: "please check your password" });
+    }
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-export const allArtists=async(req,res)=>{
+export const allArtists = async (req, res) => {
   try {
-      const Artists=await Artist.find({is_Confirm:true})
-      if(!Artists){return res.status(400).json({message:"no artist here"})}
+    const Artists = await Artist.find({ is_Confirm: true });
+    if (!Artists) {
+      return res.status(400).json({ message: "no artist here" });
+    }
 
-      return res.status(200).json({Artists})
-
+    return res.status(200).json({ Artists });
   } catch (error) {
     console.log(error);
   }
-}
+};
