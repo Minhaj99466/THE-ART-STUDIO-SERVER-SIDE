@@ -214,3 +214,18 @@ export const allArtists = async (req, res) => {
     console.log(error);
   }
 };
+
+export const singleArtistDetails = async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const ArtistData =await Artist.findOne({_id: req.params.id,is_Confirm:true})
+    if(!ArtistData){
+      return res.status(401).res.json({message:"No Artist Found"})
+    }
+    return res.status(200).json(ArtistData)
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+

@@ -56,6 +56,9 @@ const userSchema = new mongoose.Schema({
   mobile: {
     type: String,
   },
+  fees: {
+    type: Number,
+  },
   category: {
     type: String,
   },

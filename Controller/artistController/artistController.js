@@ -30,9 +30,10 @@ export const addProfile=async(req,res)=>{
       experience,
       place,
       number,
+      fees,
       description,
     } = req.body;
-    const t = await uploadToCloudinary(
+    const uploadedImages = await uploadToCloudinary(
       req.file.path,
       "dp"
     );
@@ -46,6 +47,7 @@ export const addProfile=async(req,res)=>{
           place: place,
           mobile: number,
           description: description,
+          fees: fees,
           displaypicture: uploadedImages.url,
           requested: true,
           is_profile:true
@@ -73,6 +75,7 @@ export const editProfile=async (req,res)=>{
           experience,
           number,
           description,
+          fees,
         } = req.body;
         const uploadedImages = await uploadToCloudinary(
           req.file.path,
@@ -88,6 +91,7 @@ export const editProfile=async (req,res)=>{
               experience: experience,
               mobile: number,
               description: description,
+              fees: fees,
               displaypicture: uploadedImages.url,
               requested: true,
               is_profile:true
