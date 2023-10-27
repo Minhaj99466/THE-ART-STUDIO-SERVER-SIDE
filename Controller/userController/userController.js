@@ -218,28 +218,52 @@ export const allArtists = async (req, res) => {
 export const singleArtistDetails = async (req, res) => {
   try {
     console.log(req.params.id);
-    const ArtistData =await Artist.findOne({_id: req.params.id,is_Confirm:true})
-    if(!ArtistData){
-      return res.status(401).res.json({message:"No Artist Found"})
+    const ArtistData = await Artist.findOne({
+      _id: req.params.id,
+      is_Confirm: true,
+    });
+    if (!ArtistData) {
+      return res.status(401).res.json({ message: "No Artist Found" });
     }
-    return res.status(200).json(ArtistData)
-    
+    return res.status(200).json(ArtistData);
   } catch (error) {
     console.log(error);
   }
 };
 export const suggestArtist = async (req, res) => {
   try {
-    const {category} =await Artist.findOne({_id: req.params.id},{category:1,_id:0})
-    const ArtistData=await Artist.find({_id:{$ne:req.params.id},is_Confirm:true,category}).limit(3)
+    const { category } = await Artist.findOne(
+      { _id: req.params.id },
+      { category: 1, _id: 0 }
+    );
+    const ArtistData = await Artist.find({
+      _id: { $ne: req.params.id },
+      is_Confirm: true,
+      category,
+    }).limit(3);
 
-    if(!ArtistData){
-      return res.status(401).res.json({message:"No Artist Found"})
+    if (!ArtistData) {
+      return res.status(401).res.json({ message: "No Artist Found" });
     }
-    return res.status(200).json(ArtistData)
-    
+    return res.status(200).json(ArtistData);
   } catch (error) {
     console.log(error);
   }
 };
+export const filteredData = async (req, res) => {
+  try {
+     const data=req.params.category
+     if(data=="All"){
+      const ArtistData=await Artist.find()
+      return res.status(200).json({ArtistData})
 
+     }else{
+      const ArtistData=await Artist.find({category:data})
+      return res.status(200).json({ArtistData})
+     }
+
+  
+  } catch (error) {
+    console.log(error);
+  }
+};
