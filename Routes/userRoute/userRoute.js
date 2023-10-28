@@ -1,7 +1,7 @@
 import express from 'express'
 const userRoute=express()
-import  {registration,googleRegister,userLogin,verification, passwordMail,checkpassword,allArtists,singleArtistDetails,suggestArtist,filteredData}  from '../../Controller/userController/userController.js';
-
+import  {allArtists,singleArtistDetails,suggestArtist,filteredData}  from '../../Controller/userController/userController.js';
+import {registration,googleRegister,userLogin,verification, passwordMail,checkpassword} from '../../Controller/userController/userAuthController.js'
 
 
 
@@ -15,7 +15,7 @@ userRoute.post('/checkpassword',checkpassword)
 userRoute.get('/allArtists',allArtists)
 userRoute.get('/artistDetails/:id',singleArtistDetails)
 userRoute.get('/suggetionArtist/:id',suggestArtist)
-userRoute.get('/filteredArtist/:category',filteredData)
+userRoute.get('/filteredArtist/:category/:search/:value',filteredData)
 
 
 
