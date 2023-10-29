@@ -6,7 +6,7 @@ import { profileDetails,addProfile,editProfile,postImages  } from '../../Control
 
 import upload from '../../MiddleWares/multer.js'
 import { artistLogin, checkpassword, googleRegister, passwordMail, registration, verification } from '../../Controller/artistController/authController.js'
-
+import { artistAuth } from '../../MiddleWares/Auth.js'
 
 
 
@@ -18,13 +18,13 @@ artistRoute.post('/artist/login',artistLogin)
 artistRoute.post('/passwordMail',passwordMail)
 artistRoute.post('/checkpassword',checkpassword)
 artistRoute.get('/artist/:id/verify/:token',verification)
-artistRoute.put('/addProfile/:id',upload.single('dp'),addProfile)
 
-artistRoute.put('/editProfile/:id',upload.single('dp'),editProfile)
-artistRoute.put('/postImages/:id',upload.array("images",3),postImages)
+artistRoute.put('/addProfile/:id',artistAuth,upload.single('dp'),addProfile)
+artistRoute.put('/editProfile/:id',artistAuth,upload.single('dp'),editProfile)
+artistRoute.put('/postImages/:id',artistAuth,upload.array("images",3),postImages)
 
-artistRoute.get('/profiledetails/:id',profileDetails)
-artistRoute.post('/addProfile',addProfile)
+artistRoute.get('/profiledetails/:id',artistAuth,profileDetails)
+artistRoute.post('/addProfile',artistAuth,addProfile)
 
 
 

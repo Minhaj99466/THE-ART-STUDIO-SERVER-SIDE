@@ -115,7 +115,7 @@ export const getArtist = async (req, res, next) => {
     if (data) {
       return res.status(200).json({ data: data });
     } else {
-      return res.status(200).json({ message: "Data not found" });
+      return res.status(400).json({ message: "Data not found" });
     }
   } catch (error) {
     console.log(error.message);
