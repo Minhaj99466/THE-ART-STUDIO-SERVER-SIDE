@@ -5,7 +5,8 @@ import Token from "../../Model/token.js";
 import sendMail from "../../utils/sendMail.js";
 import crypto from "crypto";
 import Artist from "../../Model/artistModel.js";
-
+import Booking from "../../Model/bookingModel.js";
+import moment from 'moment'
 
 export const allArtists = async (req, res) => {
   try {
@@ -80,5 +81,77 @@ export const filteredData = async (req, res) => {
     return res.status(200).json({ ArtistData, totalPages });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const BookingSlot = async (req, res) => {
+  try {
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWTUSERKEY);
+
+    const { toDate, fromDate,artistId , totalDays } = req.body;
+    const userId = decoded.userId;
+    const newBooking = new Booking({
+      artistId,
+      fromDate:moment(fromDate).format('DD-MM-YYYY'),
+      toDate:moment(toDate).format('DD-MM-YYYY'),
+      totalDays,
+      userId
+    });
+  
+
+     const bookingSaved=await newBooking.save().then(console.log("booking saved Done"))
+    const artistBookings=await Artist.findOne({_id:artistId})
+        artistBookings.bookingsPending.push({
+          fromDate:moment(fromDate).format('DD-MM-YYYY'),
+      toDate:moment(toDate).format('DD-MM-YYYY'),
+      totalDays,
+      userId,
+      status:bookingSaved.status
+        })
+        await artistBookings.save()
+
+
+     return res.status(200).json({message:"slot Booked wait for artist confirmation "})
+     
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const DateCheck = async (req, res) => {
+  try {
+    const { id, from, to } = req.params;
+
+
+    const fromDate = moment(from, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    const toDate = moment(to, 'DD-MM-YYYY').format('DD-MM-YYYY');
+
+    
+
+    const overlappingBookings = await Artist.find({
+      _id: id,
+      bookingsPending: {
+        $elemMatch: {
+          $or: [
+            {
+              fromDate: { $lte: toDate },
+              toDate: { $gte: fromDate },
+            },
+          ],
+        },
+      },
+    });
+
+    console.log(overlappingBookings);
+    if (overlappingBookings.length > 0) {
+      return res.status(200).json({booked:false, message: 'Dates are already booked' });
+    }
+
+    return res.status(200).json({booked:true, message: 'Dates are available' });
+  } catch (error) {
+    console.error("Error checking dates:", error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

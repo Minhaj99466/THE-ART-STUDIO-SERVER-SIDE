@@ -73,6 +73,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "pending",
   },
+  bookingsPending:[{
+  }]
 });
 
 const Artist = mongoose.model("Artist", userSchema);
