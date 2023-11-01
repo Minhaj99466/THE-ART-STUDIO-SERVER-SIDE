@@ -6,7 +6,13 @@ import { profileDetails,addProfile,editProfile,postImages  } from '../../Control
 
 import upload from '../../MiddleWares/multer.js'
 import { artistLogin, checkpassword, googleRegister, passwordMail, registration, verification } from '../../Controller/artistController/authController.js'
+
+
 import { artistAuth } from '../../MiddleWares/Auth.js'
+import { dateNotification,changeBookingStatus } from '../../Controller/artistController/slotController.js'
+
+
+
 
 
 
@@ -25,6 +31,10 @@ artistRoute.put('/postImages/:id',artistAuth,upload.array("images",3),postImages
 
 artistRoute.get('/profiledetails/:id',artistAuth,profileDetails)
 artistRoute.post('/addProfile',artistAuth,addProfile)
+
+artistRoute.get('/datenotification',artistAuth,dateNotification)
+artistRoute.put('/updatebooking',artistAuth,changeBookingStatus)
+
 
 
 

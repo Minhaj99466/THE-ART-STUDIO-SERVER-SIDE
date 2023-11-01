@@ -3,14 +3,14 @@ const Schema = mongoose.Schema;
 
 const bookingSchema = new Schema({
    
-    artistId:{
-        type:String,
-        required:true
-    },
-    userId:{
-        type:String,
-        required:true
-    },
+    artistId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Artist',
+      },
+      userId: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User',
+      },
     fromDate:{
         type:String,
         required:true
@@ -27,13 +27,10 @@ const bookingSchema = new Schema({
         type:String,
         required:true,
     },
-    totalDays:{
-        type:String,
-        default:"pending",
-    },
     status:{
         type:String,
         default:"Pending"
     }
 });
-export default mongoose.model("booking", bookingSchema);
+ const Booking= mongoose.model("booking", bookingSchema);
+ export default Booking

@@ -89,36 +89,30 @@ export const BookingSlot = async (req, res) => {
     let token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWTUSERKEY);
 
-    const { toDate, fromDate,artistId , totalDays } = req.body;
+    const { artistId, toDate, fromDate, totalDays } = req.body;
     const userId = decoded.userId;
+
     const newBooking = new Booking({
-      artistId,
-      fromDate:moment(fromDate).format('DD-MM-YYYY'),
-      toDate:moment(toDate).format('DD-MM-YYYY'),
+      artistId:artistId, 
+      userId: userId,
+      fromDate: moment(fromDate).format('DD-MM-YYYY'),
+      toDate: moment(toDate).format('DD-MM-YYYY'),
       totalDays,
-      userId
     });
-  
 
-     const bookingSaved=await newBooking.save().then(console.log("booking saved Done"))
-    const artistBookings=await Artist.findOne({_id:artistId})
-        artistBookings.bookingsPending.push({
-          fromDate:moment(fromDate).format('DD-MM-YYYY'),
-      toDate:moment(toDate).format('DD-MM-YYYY'),
-      totalDays,
-      userId,
-      status:bookingSaved.status
-        })
-        await artistBookings.save()
+    const bookingSaved = await newBooking.save();
+
+    const artistBookings = await Artist.findOne({ _id: artistId });
+    artistBookings.bookingsPending.push(bookingSaved._id); 
+    await artistBookings.save();
 
 
-     return res.status(200).json({message:"slot Booked wait for artist confirmation "})
-     
+    return res.status(200).json({ message: "Slot Booked, wait for artist confirmation" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 export const DateCheck = async (req, res) => {
   try {
@@ -130,19 +124,53 @@ export const DateCheck = async (req, res) => {
 
     
 
-    const overlappingBookings = await Artist.find({
-      _id: id,
-      bookingsPending: {
-        $elemMatch: {
-          $or: [
+    const overlappingBookings = await Booking.find({
+      artistId: id,
+      $or: [
+        {
+          $and: [
             {
-              fromDate: { $lte: toDate },
-              toDate: { $gte: fromDate },
+              fromDate: { $gte: fromDate, $lte: toDate },
+            },
+            {
+              $or: [
+                { status: "Pending" },
+                { status: "Success" },
+              ],
             },
           ],
         },
-      },
+        {
+          $and: [
+            {
+              fromDate: { $lte: fromDate },
+              toDate: { $gt: toDate },
+            },
+            {
+              $or: [
+                { status: "Pending" },
+                { status: "Success" },
+              ],
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              fromDate: { $lt: fromDate },
+              toDate: { $gte: toDate },
+            },
+            {
+              $or: [
+                { status: "Pending" },
+                { status: "Success" },
+              ],
+            },
+          ],
+        },
+      ],
     });
+    
 
     console.log(overlappingBookings);
     if (overlappingBookings.length > 0) {
@@ -155,3 +183,5 @@ export const DateCheck = async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
