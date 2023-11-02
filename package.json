@@ -23,6 +23,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.5",
     "nodemon": "^3.0.1",
-    "postman": "^0.2.0"
+    "postman": "^0.2.0",
+    "react-stripe": "^0.1.0",
+    "stripe": "^14.2.0"
   }
 }

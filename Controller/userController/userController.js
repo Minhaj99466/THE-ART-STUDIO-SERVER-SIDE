@@ -6,7 +6,9 @@ import sendMail from "../../utils/sendMail.js";
 import crypto from "crypto";
 import Artist from "../../Model/artistModel.js";
 import Booking from "../../Model/bookingModel.js";
-import moment from 'moment'
+import moment from "moment";
+import { env } from "process";
+import { Stripe } from "stripe";
 
 export const allArtists = async (req, res) => {
   try {
@@ -86,28 +88,32 @@ export const filteredData = async (req, res) => {
 
 export const BookingSlot = async (req, res) => {
   try {
+
     let token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWTUSERKEY);
 
-    const { artistId, toDate, fromDate, totalDays } = req.body;
+    const { artistId,ToDate,fromDate, totalDays,fees } = req.body;
+    
     const userId = decoded.userId;
 
     const newBooking = new Booking({
-      artistId:artistId, 
+      artistId: artistId,
       userId: userId,
-      fromDate: moment(fromDate).format('DD-MM-YYYY'),
-      toDate: moment(toDate).format('DD-MM-YYYY'),
+      toDate: moment(ToDate).format("DD-MM-YYYY"),
+      fromDate: moment(fromDate).format("DD-MM-YYYY"),
       totalDays,
+      totalAmount:fees
     });
 
     const bookingSaved = await newBooking.save();
 
     const artistBookings = await Artist.findOne({ _id: artistId });
-    artistBookings.bookingsPending.push(bookingSaved._id); 
+    artistBookings.bookingsPending.push(bookingSaved._id);
     await artistBookings.save();
 
-
-    return res.status(200).json({ message: "Slot Booked, wait for artist confirmation" });
+    return res
+      .status(200)
+      .json({payment:true, message: "Slot Booked, wait for artist confirmation" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -118,11 +124,8 @@ export const DateCheck = async (req, res) => {
   try {
     const { id, from, to } = req.params;
 
-
-    const fromDate = moment(from, 'DD-MM-YYYY').format('DD-MM-YYYY');
-    const toDate = moment(to, 'DD-MM-YYYY').format('DD-MM-YYYY');
-
-    
+    const fromDate = moment(from, "DD-MM-YYYY").format("DD-MM-YYYY");
+    const toDate = moment(to, "DD-MM-YYYY").format("DD-MM-YYYY");
 
     const overlappingBookings = await Booking.find({
       artistId: id,
@@ -133,10 +136,7 @@ export const DateCheck = async (req, res) => {
               fromDate: { $gte: fromDate, $lte: toDate },
             },
             {
-              $or: [
-                { status: "Pending" },
-                { status: "Success" },
-              ],
+              $or: [{ status: "Pending" }, { status: "Success" }],
             },
           ],
         },
@@ -147,10 +147,7 @@ export const DateCheck = async (req, res) => {
               toDate: { $gt: toDate },
             },
             {
-              $or: [
-                { status: "Pending" },
-                { status: "Success" },
-              ],
+              $or: [{ status: "Pending" }, { status: "Success" }],
             },
           ],
         },
@@ -161,27 +158,49 @@ export const DateCheck = async (req, res) => {
               toDate: { $gte: toDate },
             },
             {
-              $or: [
-                { status: "Pending" },
-                { status: "Success" },
-              ],
+              $or: [{ status: "Pending" }, { status: "Success" }],
             },
           ],
         },
       ],
     });
-    
 
-    console.log(overlappingBookings);
+    // console.log(overlappingBookings);
     if (overlappingBookings.length > 0) {
-      return res.status(200).json({booked:false, message: 'Dates are already booked' });
+      return res
+        .status(200)
+        .json({ booked: false, message: "Dates are already booked" });
     }
 
-    return res.status(200).json({booked:true, message: 'Dates are available' });
+    return res
+      .status(200)
+      .json({ booked: true, message: "Dates are available" });
   } catch (error) {
     console.error("Error checking dates:", error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+export const payment = async (req, res, next) => {
+  try {
+    const stripe = new Stripe(
+      "sk_test_51O7buMSAHGGVNWH2POHgAvRlGC70JqBnwu9eUElqD7kNIHtPOA4M3LesSc8lUiiBpqkZgaMT9xKIhYH9C0Q7hI4800gevTB7qq"
+    );
+    const artist = await Artist.findById(req.params.id);
 
+    const artistFees = artist.fees;
+
+    const paymentintent = await stripe.paymentIntents.create({
+      amount: artistFees * 100,
+      currency: "inr",
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    res.status(200).json({
+      clientSecret: paymentintent.client_secret,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
