@@ -95,6 +95,7 @@ export const BookingSlot = async (req, res) => {
     const { artistId,ToDate,fromDate, totalDays,fees } = req.body;
     
     const userId = decoded.userId;
+    const totalPaid= totalDays*fees
 
     const newBooking = new Booking({
       artistId: artistId,
@@ -102,7 +103,7 @@ export const BookingSlot = async (req, res) => {
       toDate: moment(ToDate).format("DD-MM-YYYY"),
       fromDate: moment(fromDate).format("DD-MM-YYYY"),
       totalDays,
-      totalAmount:fees
+      totalAmount:totalPaid
     });
 
     const bookingSaved = await newBooking.save();
@@ -184,7 +185,7 @@ export const DateCheck = async (req, res) => {
 export const payment = async (req, res, next) => {
   try {
     const stripe = new Stripe(
-      "sk_test_51O7buMSAHGGVNWH2POHgAvRlGC70JqBnwu9eUElqD7kNIHtPOA4M3LesSc8lUiiBpqkZgaMT9xKIhYH9C0Q7hI4800gevTB7qq"
+      process.env.STRIPE_SECRET_KEY
     );
     const artist = await Artist.findById(req.params.id);
 
