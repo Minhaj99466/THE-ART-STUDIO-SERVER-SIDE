@@ -46,6 +46,9 @@ export const login = async (req, res) => {
 
 export const manageUsers = async (req, res) => {
   try {
+    console.log("ghfghfgh");
+
+
     const users = await User.find({ is_admin: false });
     res.status(200).json({message:true, users });
   } catch (error) {
@@ -54,8 +57,30 @@ export const manageUsers = async (req, res) => {
 };
 export const manageArtist = async (req, res) => {
   try {
-    const artist = await Artist.find();
-    res.status(200).json({ artist });
+
+    const search = req.params.search;
+    const value = req.params.value;
+    const page = (value - 1) * 6;
+    let query = {is_Confirm:true};
+
+    
+    if (search != 0) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+    const totalArtists = await Artist.countDocuments(query);
+    const artist = await Artist.find(query).skip(page).limit(6);
+    const artistsPerPage = 6;
+    const totalPages = Math.ceil(totalArtists / artistsPerPage);
+
+    return res.status(200).json({ artist, totalPages });
+
+
+ 
+    // const artist = await Artist.find();
+    // res.status(200).json({ artist });
   } catch (error) {
     console.log(error);
   }
@@ -81,6 +106,7 @@ export const manageAction = async (req, res) => {
 export const manageArtistAction = async (req, res) => {
   try {
     const { id } = req.body;
+    console.log(id);
     const artist = await Artist.findById(id);
     const change = await Artist.findOneAndUpdate(
       { _id: id },

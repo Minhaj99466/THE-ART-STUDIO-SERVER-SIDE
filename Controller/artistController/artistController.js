@@ -49,7 +49,6 @@ export const addProfile=async(req,res)=>{
           description: description,
           fees: fees,
           displaypicture: uploadedImages.url,
-          requested: true,
           is_profile:true
         },
       }
@@ -93,7 +92,6 @@ export const editProfile=async (req,res)=>{
               description: description,
               fees: fees,
               displaypicture: uploadedImages.url,
-              requested: true,
               is_profile:true
             },
           }
@@ -128,6 +126,7 @@ export const postImages=async (req,res)=>{
         },
         $set: {
           is_posts: true,
+          requested: true,
         },
       }
     );

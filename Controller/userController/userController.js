@@ -30,7 +30,7 @@ export const singleArtistDetails = async (req, res) => {
       is_Confirm: true,
     });
     if (!ArtistData) {
-      return res.status(401).res.json({ message: "No Artist Found" });
+      return res.status(401).json({ message: "No Artist Found" });
     }
     return res.status(200).json(ArtistData);
   } catch (error) {
@@ -63,11 +63,12 @@ export const filteredData = async (req, res) => {
     const search = req.params.search;
     const value = req.params.value;
     const page = (value - 1) * 6;
-    let query = {};
+    let query = {is_Confirm:true};
 
     if (category != "All") {
       query.category = category;
     }
+    
     if (search != 0) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -166,7 +167,6 @@ export const DateCheck = async (req, res) => {
       ],
     });
 
-    // console.log(overlappingBookings);
     if (overlappingBookings.length > 0) {
       return res
         .status(200)
@@ -189,7 +189,7 @@ export const payment = async (req, res, next) => {
     );
     const artist = await Artist.findById(req.params.id);
 
-    const artistFees = artist.fees;
+    const artistFees = artist.fees*req.params.total;
 
     const paymentintent = await stripe.paymentIntents.create({
       amount: artistFees * 100,

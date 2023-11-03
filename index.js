@@ -16,7 +16,7 @@ env.config()
 
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/THEARTSTUDIO')
+mongoose.connect(process.env.MONGODB)
 
 
 app.use(express.json())
