@@ -6,7 +6,7 @@ import { adminAuth } from '../../MiddleWares/Auth.js'
 
 
 adminRoute.post('/admin/login',login)
-adminRoute.get('/admin/users',adminAuth,manageUsers)
+adminRoute.get('/admin/users/:search/:value',adminAuth,manageUsers)
 adminRoute.get('/admin/artist/:search/:value',adminAuth,manageArtist)
 adminRoute.patch('/admin/manageuser',manageAction)
 adminRoute.patch('/admin/manageartist',manageArtistAction)

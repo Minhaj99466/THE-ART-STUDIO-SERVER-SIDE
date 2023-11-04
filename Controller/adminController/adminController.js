@@ -48,9 +48,29 @@ export const manageUsers = async (req, res) => {
   try {
     console.log("ghfghfgh");
 
+    const search = req.params.search;
+    const value = req.params.value;
+    const page = (value - 1) * 6;
+    let query = {is_admin:false};
 
-    const users = await User.find({ is_admin: false });
-    res.status(200).json({message:true, users });
+    
+    if (search != 0) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+    const totalUser = await User.countDocuments(query);
+    const users = await User.find(query).skip(page).limit(6);
+    const userPerPage = 6;
+    const totalPages = Math.ceil(totalUser / userPerPage);
+
+    return res.status(200).json({ users, totalPages });
+
+
+
+    // const users = await User.find({ is_admin: false });
+    // res.status(200).json({message:true, users });
   } catch (error) {
     console.log(error);
   }

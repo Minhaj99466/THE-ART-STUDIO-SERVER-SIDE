@@ -205,3 +205,24 @@ export const payment = async (req, res, next) => {
     console.log(error);
   }
 };
+
+export const orderDetails = async (req, res) => {
+  try {
+   const id=req.params.id
+   const userData=await User.findOne({email:id})
+    const userId=userData.id
+
+    const bookingData=await Booking.find({userId:userId}).populate('artistId')
+    
+    if(!bookingData){
+      return res.status(400).json({message:"there is no data no show"})
+    }
+    
+    console.log(bookingData);
+
+    return res.status(200).json({bookingData})
+
+  } catch (error) {
+    console.log(error);
+  }
+};
