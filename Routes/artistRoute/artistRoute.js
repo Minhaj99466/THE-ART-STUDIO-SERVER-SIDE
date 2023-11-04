@@ -9,7 +9,7 @@ import { artistLogin, checkpassword, googleRegister, passwordMail, registration,
 
 
 import { artistAuth } from '../../MiddleWares/Auth.js'
-import { dateNotification,changeBookingStatus } from '../../Controller/artistController/slotController.js'
+import { dateNotification,changeBookingStatus,allOrders } from '../../Controller/artistController/slotController.js'
 
 
 
@@ -34,6 +34,7 @@ artistRoute.post('/addProfile',artistAuth,addProfile)
 
 artistRoute.get('/datenotification',artistAuth,dateNotification)
 artistRoute.put('/updatebooking',artistAuth,changeBookingStatus)
+artistRoute.get('/getAllOrders',artistAuth,allOrders)
 
 
 

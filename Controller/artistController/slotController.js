@@ -45,12 +45,29 @@ export const changeBookingStatus = async (req, res) => {
       { _id: Id },
       { $set: { status: status } }
     );
-    
+
     if (!bookingUpdated) {
       return res.status(200).json({ message: "status change not Done" });
     }
 
-    return res.status(200).json({change:true, message: "status Changed" });
+    return res.status(200).json({ change: true, message: "status Changed" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const allOrders = async (req, res) => {
+  try {
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWTARTISTKEY);
+
+    const allOrders = await Booking.findOne({
+      artistId: decoded.artistId,
+    })
+    console.log(allOrders);
+    if (!allOrders) {
+      return res.status(400).json({ message: "no booking available" });
+    }
+    return res.status(200).json({ allOrders });
   } catch (error) {
     console.log(error);
   }

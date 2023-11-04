@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+const Schema = mongoose.Schema;
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -73,7 +75,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "pending",
   },
-  bookingsPending:[{
+  bookingsPending:[{ 
+    type: Schema.Types.ObjectId,
+    ref:'booking',
+  
   }]
 });
 
