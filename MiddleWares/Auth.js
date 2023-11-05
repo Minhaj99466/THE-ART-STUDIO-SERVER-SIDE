@@ -53,9 +53,9 @@ export const artistAuth = async (req, res, next) => {
           .json({ message: "user not authorised or inavid user" });
       }
     } else {
-      return res.status(500).json({ message: "user not authorised" });
+      return res.status(500).json({ message: "user not authorised" });  
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message,"hghghguhjh");
   }
 };
