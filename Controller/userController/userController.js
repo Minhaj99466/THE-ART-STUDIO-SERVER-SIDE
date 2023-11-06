@@ -217,10 +217,31 @@ export const orderDetails = async (req, res) => {
     if(!bookingData){
       return res.status(400).json({message:"there is no data no show"})
     }
-    
-    console.log(bookingData);
 
     return res.status(200).json({bookingData})
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const cancelBooking = async (req, res) => {
+  try {
+   const reason=req.body.reason
+   const id=req.body.id.id
+   const totalAmount=req.body.id.totalAmount
+
+   const cancelBooking=await Booking.findOneAndUpdate({_id:id},{$set:{reason:reason,status:"Cancel"}})
+    if(!cancelBooking){
+     return res.status(400).json({message:"No orders found"})
+    }
+    const userId =cancelBooking.userId
+    const userWalletUpdate=await User.findOneAndUpdate({_id:userId},{$inc:{wallet:totalAmount}})
+    if(!userWalletUpdate){
+      return res.status(400).json({message:"No update fail"})
+    }
+    return res.status(200).json({message:"booking canceled"})
+    
+   
 
   } catch (error) {
     console.log(error);

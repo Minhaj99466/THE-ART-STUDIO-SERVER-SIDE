@@ -60,9 +60,9 @@ export const allOrders = async (req, res) => {
     let token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWTARTISTKEY);
 
-    const allOrders = await Booking.findOne({
+    const allOrders = await Booking.find({
       artistId: decoded.artistId,
-    })
+    }).populate('userId')
     console.log(allOrders);
     if (!allOrders) {
       return res.status(400).json({ message: "no booking available" });

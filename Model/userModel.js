@@ -43,6 +43,9 @@ const userSchema = new mongoose.Schema({
   is_google:{
     type:Boolean,
     default:false
+  },
+  wallet:{
+    type:Number,
   }
 });
 
