@@ -15,24 +15,24 @@ export const login = async (req, res) => {
     if (admin.is_admin) {
       const passOk = await bcrypt.compare(password, admin.password);
       if (passOk) {
-        const token = jwt.sign({ adminId: admin._id }, process.env.JWTADMINKEY, {
-          expiresIn: "24h",
+        const token = jwt.sign(
+          { adminId: admin._id },
+          process.env.JWTADMINKEY,
+          {
+            expiresIn: "24h",
+          }
+        );
+        res.status(200).json({
+          loginSuccess: true,
+          message: "Admin login Success",
+          token,
+          admin,
         });
-        res
-          .status(200)
-          .json({
-            loginSuccess: true,
-            message: "Admin login Success",
-            token,
-            admin,
-          });
       } else {
-        res
-          .status(201)
-          .json({
-            loginSuccess: false,
-            message: "incorrect Password please check you password",
-          });
+        res.status(201).json({
+          loginSuccess: false,
+          message: "incorrect Password please check you password",
+        });
       }
     } else {
       res
@@ -50,10 +50,10 @@ export const manageUsers = async (req, res) => {
 
     const search = req.params.search;
     const value = req.params.value;
-    const page = (value - 1) * 6;
-    let query = {is_admin:false};
 
-    
+    const page = (value - 1) * 6;
+    let query = { is_verfied: true };
+
     if (search != 0) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -67,8 +67,6 @@ export const manageUsers = async (req, res) => {
 
     return res.status(200).json({ users, totalPages });
 
-
-
     // const users = await User.find({ is_admin: false });
     // res.status(200).json({message:true, users });
   } catch (error) {
@@ -77,13 +75,11 @@ export const manageUsers = async (req, res) => {
 };
 export const manageArtist = async (req, res) => {
   try {
-
     const search = req.params.search;
     const value = req.params.value;
     const page = (value - 1) * 6;
-    let query = {is_Confirm:true};
+    let query = { is_Confirm: true };
 
-    
     if (search != 0) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -95,12 +91,8 @@ export const manageArtist = async (req, res) => {
     const artistsPerPage = 6;
     const totalPages = Math.ceil(totalArtists / artistsPerPage);
 
+    
     return res.status(200).json({ artist, totalPages });
-
-
- 
-    // const artist = await Artist.find();
-    // res.status(200).json({ artist });
   } catch (error) {
     console.log(error);
   }
@@ -122,7 +114,6 @@ export const manageAction = async (req, res) => {
   }
 };
 
-
 export const manageArtistAction = async (req, res) => {
   try {
     const { id } = req.body;
@@ -140,10 +131,12 @@ export const manageArtistAction = async (req, res) => {
   }
 };
 
-
 export const notVerified = async (req, res, next) => {
   try {
-    const notVerified = await Artist.find({ is_Confirm:false, requested: true });
+    const notVerified = await Artist.find({
+      is_Confirm: false,
+      requested: true,
+    });
     if (notVerified) {
       return res.status(200).json({ data: notVerified });
     } else {
@@ -167,8 +160,6 @@ export const getArtist = async (req, res, next) => {
     console.log(error.message);
   }
 };
-
-
 
 export const verifyArtist = async (req, res, next) => {
   try {
