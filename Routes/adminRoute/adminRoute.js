@@ -8,11 +8,11 @@ import { adminAuth } from '../../MiddleWares/Auth.js'
 adminRoute.post('/admin/login',login)
 adminRoute.get('/admin/users/:search/:value',adminAuth,manageUsers)
 adminRoute.get('/admin/artist/:search/:value',adminAuth,manageArtist)
-adminRoute.patch('/admin/manageuser',manageAction)
-adminRoute.patch('/admin/manageartist',manageArtistAction)
-adminRoute.get("/getArtist/:id",getArtist);
-adminRoute.get("/notVerified",notVerified);
-adminRoute.put("/verify/:id",verifyArtist);
+adminRoute.patch('/admin/manageuser',adminAuth,manageAction)
+adminRoute.patch('/admin/manageartist',adminAuth,manageArtistAction)
+adminRoute.get("/getArtist/:id",adminAuth,getArtist);
+adminRoute.get("/notVerified",adminAuth,notVerified);
+adminRoute.put("/verify/:id",adminAuth,verifyArtist);
 
 
 export default adminRoute

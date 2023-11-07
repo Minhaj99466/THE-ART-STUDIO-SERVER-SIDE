@@ -59,3 +59,31 @@ export const artistAuth = async (req, res, next) => {
     console.log(error.message,"hghghguhjh");
   }
 };
+export const userAuth = async (req, res, next) => {
+  try {
+    if (req.headers.authorization) {
+      let token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWTUSERKEY);
+
+      const user = await User.findOne({
+        _id: decoded.userId,
+      });
+      if (user) {
+        if (user.is_block === false) {
+          req.headers.userId = decoded.userId;
+          next();
+        } else {
+          return res.status(500).json({ message: "You are blocked by admin " });
+        }
+      } else {
+        return res
+          .status(500)
+          .json({ message: "user not authorised or inavid user" });
+      }
+    } else {
+      return res.status(500).json({ message: "user not authorised" });  
+    }
+  } catch (error) {
+    console.log(error.message,"hghghguhjh");
+  }
+};

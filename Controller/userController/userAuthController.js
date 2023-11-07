@@ -47,7 +47,7 @@ export const googleRegister = async (req, res) => {
 
     if (exist) {
       return res
-        .status(200)
+        .status(400)
         .json({ created: false, message: "Email already exist" });
     } else {
       const hashpass = await bcrypt.hash(id, 10);
@@ -78,7 +78,7 @@ export const userLogin = async (req, res) => {
     const exist = await User.findOne({ email: email });
     if (exist) {
       if (exist.is_block === true) {
-        return res.status(200).json({ message: "user Is Blocked By Admin" });
+        return res.status(400).json({ message: "user Is Blocked By Admin" });
       }
       const passOk = await bcrypt.compare(password, exist.password);
       if (passOk) {

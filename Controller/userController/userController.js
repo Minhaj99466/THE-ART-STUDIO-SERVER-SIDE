@@ -30,7 +30,7 @@ export const singleArtistDetails = async (req, res) => {
       is_Confirm: true,
     });
     if (!ArtistData) {
-      return res.status(401).json({ message: "No Artist Found" });
+      return res.status(400).json({ message: "No Artist Found" });
     }
     return res.status(200).json(ArtistData);
   } catch (error) {
@@ -50,7 +50,7 @@ export const suggestArtist = async (req, res) => {
     }).limit(3);
 
     if (!ArtistData) {
-      return res.status(401).res.json({ message: "No Artist Found" });
+      return res.status(400).res.json({ message: "No Artist Found" });
     }
     return res.status(200).json(ArtistData);
   } catch (error) {
@@ -118,7 +118,7 @@ export const BookingSlot = async (req, res) => {
       .json({payment:true, message: "Slot Booked, wait for artist confirmation" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    // return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -178,7 +178,6 @@ export const DateCheck = async (req, res) => {
       .json({ booked: true, message: "Dates are available" });
   } catch (error) {
     console.error("Error checking dates:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -226,9 +225,9 @@ export const orderDetails = async (req, res) => {
 };
 export const cancelBooking = async (req, res) => {
   try {
-   const reason=req.body.reason
-   const id=req.body.id.id
-   const totalAmount=req.body.id.totalAmount
+   const reason=req.body.cancelData.reason
+   const id=req.body.cancelData.id
+   const totalAmount=req.body.cancelData.totalAmount
 
    const cancelBooking=await Booking.findOneAndUpdate({_id:id},{$set:{reason:reason,status:"Cancel"}})
     if(!cancelBooking){

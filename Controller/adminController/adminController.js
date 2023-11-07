@@ -36,7 +36,7 @@ export const login = async (req, res) => {
       }
     } else {
       res
-        .status(200)
+        .status(400)
         .json({ loginSuccess: false, message: "Its not An admin" });
     }
   } catch (error) {
@@ -46,7 +46,6 @@ export const login = async (req, res) => {
 
 export const manageUsers = async (req, res) => {
   try {
-    console.log("ghfghfgh");
 
     const search = req.params.search;
     const value = req.params.value;
@@ -67,8 +66,6 @@ export const manageUsers = async (req, res) => {
 
     return res.status(200).json({ users, totalPages });
 
-    // const users = await User.find({ is_admin: false });
-    // res.status(200).json({message:true, users });
   } catch (error) {
     console.log(error);
   }
@@ -91,7 +88,7 @@ export const manageArtist = async (req, res) => {
     const artistsPerPage = 6;
     const totalPages = Math.ceil(totalArtists / artistsPerPage);
 
-    
+
     return res.status(200).json({ artist, totalPages });
   } catch (error) {
     console.log(error);
@@ -175,7 +172,7 @@ export const verifyArtist = async (req, res, next) => {
         .json({ verified: true, message: "doctor vrification Success" });
     } else {
       return res
-        .status(200)
+        .status(400)
         .json({ created: false, message: "doctor verification failed" });
     }
   } catch (error) {
