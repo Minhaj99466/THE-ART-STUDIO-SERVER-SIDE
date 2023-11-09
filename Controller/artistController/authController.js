@@ -139,6 +139,66 @@ export const registration = async (req, res) => {
       console.log(error);
     }
   };
+  export const artistGoogleLogin = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const exist = await Artist.findOne({ email: email });
+      if (exist) {
+        if (exist.is_block === true) {
+          return res.status(200).json({ message: "Artist Is Blocked By Admin" });
+        }
+        const passOk = await bcrypt.compare(password, exist.password);
+        if (passOk) {
+          if (!exist.is_verfied) {
+            const token = await Token.findOne({ artistId: exist.id });
+            if (token) {
+              return res
+                .status(200)
+                .json({
+                  message: "We Already sent mail  Please Check Your Mail",
+                });
+            }
+            const emailToken = await new Token({
+              artistId: exist.id,
+              token: crypto.randomBytes(32).toString("hex"),
+            }).save();
+            const url = `${process.env.BASE_URL}artist/${exist._id}/verify/${emailToken.token}`;
+            await sendMail(exist.email, "Verify Email", url);
+            return res
+              .status(200)
+              .json({ message: "An Email SEnt To your account Please verify" });
+          }
+          const token = jwt.sign({ artistId: exist._id }, process.env.JWTARTISTKEY, {
+            expiresIn: "24h",
+          });
+          res
+            .status(200)
+            .json({
+              loginSuccess: true,
+              message: "login success",
+              user: exist,
+              token,
+            });
+        } else {
+          res
+            .status(200)
+            .json({
+              loginSuccess: false,
+              message: "Wrong Password please Check",
+            });
+        }
+      } else {
+        res
+          .status(200)
+          .json({
+            loginSuccess: false,
+            message: "Artist Doesn't Exist Please Register",
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
   export const verification = async (req, res) => {
     try {

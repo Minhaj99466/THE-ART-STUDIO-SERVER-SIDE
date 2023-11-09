@@ -4,6 +4,8 @@ import {
   MultiUploadCloudinary
 } from "../../utils/cloudinary.js";
 import Artist from "../../Model/artistModel.js";
+import Chat from "../../Model/chatModel.js";
+import User from "../../Model/userModel.js";
 
 
 
@@ -133,10 +135,61 @@ export const postImages=async (req,res)=>{
     if (updatedArtist) {
       return res.status(200).json({created:true, data: updatedArtist, message: "updated" });
     } else {
-      return res.status(500).json({ message: "updation failed" });
+      return res.status(400).json({ message: "updation failed" });
     }
  
 } catch (error) {
 console.log(error);
 }
 }
+
+
+export const fetchChats = async (req, res) => {
+  try {
+    console.log("reached");
+    const  userId  = req.params.userId;
+    // console.log(req.params,"artistId");
+    console.log(userId);
+    const result = await Chat.find({ "users.artist": userId })
+      .populate("users.user", "-password")
+      .populate("users.artist", "-password")
+      .populate("latestMessage")
+      .populate({
+        path: "latestMessage",
+        populate: {
+          path: "sender.artist",
+          select: "-password",
+        },
+      })
+      .populate({
+        path: "latestMessage",
+        populate: {
+          path: "sender.user",
+          select: "-password",
+        },
+      })
+      .then((result) => {
+        // console.log(result), 
+        res.send(result);
+      });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+export const searchUsers = async (req, res) => {
+  try {
+    const keyword = req.query.search
+      ? {
+          $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { email: { $regex: req.query.search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const users = await User.find(keyword); //.find({ _id: { $ne: req.user._id } });
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(error.message);
+  }
+};

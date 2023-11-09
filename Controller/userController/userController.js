@@ -9,6 +9,7 @@ import Booking from "../../Model/bookingModel.js";
 import moment from "moment";
 import { env } from "process";
 import { Stripe } from "stripe";
+import Chat from "../../Model/chatModel.js";
 
 export const allArtists = async (req, res) => {
   try {
@@ -246,3 +247,53 @@ export const cancelBooking = async (req, res) => {
     console.log(error);
   }
 };
+
+
+export const fetchChats = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // console.log(userId,"fetchData Param Console");
+    const result = await Chat.find({ "users.user": userId })
+      .populate("users.user", "-password")
+      .populate("users.artist", "-password")
+      .populate("latestMessage")
+      .populate({
+        path: "latestMessage",
+        populate: {
+          path: "sender.doctor" ? "sender.artist" : "sender.user",
+          select: "-password",
+        },
+      })
+      .populate({
+        path: "latestMessage",
+        populate: {
+          path: "sender.user",
+          select: "-password",
+        },
+      })
+      .then((result) => {
+        // console.log(result),
+         res.send(result);
+      });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  console.log("reached");
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const users = await Artist.find(keyword); //.find({ _id: { $ne: req.user._id } });
+  console.log(users);
+  res.status(200).json(users);
+};
+
+

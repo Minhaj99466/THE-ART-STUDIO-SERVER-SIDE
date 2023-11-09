@@ -1,8 +1,9 @@
 import express from 'express'
 const userRoute=express()
-import  {allArtists,singleArtistDetails,suggestArtist,filteredData,BookingSlot,DateCheck,payment,orderDetails,cancelBooking}  from '../../Controller/userController/userController.js';
+import  {allArtists,singleArtistDetails,suggestArtist,filteredData,BookingSlot,DateCheck,payment,orderDetails,cancelBooking, fetchChats, searchUsers}  from '../../Controller/userController/userController.js';
 import {registration,googleRegister,userLogin,verification, passwordMail,checkpassword} from '../../Controller/userController/userAuthController.js'
 import { userAuth } from '../../MiddleWares/Auth.js';
+import { accessChat, allMessages, sendMessage } from '../../Controller/chatController.js/chatController.js';
 
 
 
@@ -24,6 +25,12 @@ userRoute.get('/checkdate/:from/:to/:id',userAuth,DateCheck)
 userRoute.post('/payment/:id/:total',userAuth,payment)
 userRoute.get('/getOrderData/:id',userAuth,orderDetails)
 userRoute.post('/cancelBooking',userAuth,cancelBooking)
+
+userRoute.post('/accesschat',accessChat)
+userRoute.get('/fetchchat/:userId',fetchChats)
+userRoute.get('/usersearch',searchUsers)
+userRoute.post('/message',sendMessage)
+userRoute.get('/message/:chatId',allMessages)
 
 
 

@@ -11,7 +11,7 @@ const chatSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "User",
       },
-      doctor: {
+      artist: {
         type: Schema.Types.ObjectId,
         ref: "Artist",
       },

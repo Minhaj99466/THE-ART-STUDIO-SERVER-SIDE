@@ -36,7 +36,6 @@ export const artistAuth = async (req, res, next) => {
     if (req.headers.authorization) {
       let token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWTARTISTKEY);
-
       const artist = await Artist.findOne({
         _id: decoded.artistId,
       });
