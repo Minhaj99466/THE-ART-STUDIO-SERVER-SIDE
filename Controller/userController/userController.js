@@ -188,8 +188,12 @@ export const payment = async (req, res, next) => {
       process.env.STRIPE_SECRET_KEY
     );
     const artist = await Artist.findById(req.params.id);
+      const wallet=req.params.wallet
 
-    const artistFees = artist.fees*req.params.total;
+    let artistFees = (artist.fees*req.params.total)-wallet;
+      if(artistFees==0){
+        artistFees=1
+      }
 
     const paymentintent = await stripe.paymentIntents.create({
       amount: artistFees * 100,
@@ -296,4 +300,17 @@ export const searchUsers = async (req, res) => {
   res.status(200).json(users);
 };
 
+
+export const userwallet = async (req, res) => {
+  try {
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWTUSERKEY);
+
+    const user=await User.findOne({_id:decoded.userId})
+    return res.status(200).json({user})
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
 

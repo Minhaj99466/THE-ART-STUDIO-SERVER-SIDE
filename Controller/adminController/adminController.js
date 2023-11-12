@@ -8,9 +8,6 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-
-    
-
     const admin = await User.findOne({ email: email,is_admin:true });
     if (!admin) {
       res.status(201).json({ loginSuccess: false, message: "Admin not Found" });
