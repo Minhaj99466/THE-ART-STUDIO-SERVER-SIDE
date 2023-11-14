@@ -128,10 +128,11 @@ export const userLogin = async (req, res) => {
 export const verification = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
+    console.log(req.param,'first requst');
     if (!user) {
       return res.status(400).json({ message: "invalid Link" });
     }
-    const token = await Token.findOne({
+    const token = await Token.find({
       userId: req.params.id,
       token: req.params.token,
     });
@@ -139,7 +140,7 @@ export const verification = async (req, res) => {
       return res.status(400).json({ message: "Invalid Link" });
     }
     await User.updateOne({ _id: user._id }, { $set: { is_verfied: true } });
-    await token.deleteOne({ token: req.params.token });
+    await Token.deleteOne({ token: req.params.token });
     res.status(200).json({ message: "Email is verified Succesfully" });
   } catch (error) {
     console.log(error);

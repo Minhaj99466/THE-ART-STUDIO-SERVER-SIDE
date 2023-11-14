@@ -206,7 +206,7 @@ export const registration = async (req, res) => {
       if (!artist) {
         return res.status(400).json({ message: "invalid Link" });
       }
-      const token = await Token.findOne({
+      const token = await Token.find({
         artistId: req.params.id,
         token: req.params.token,
       });
@@ -214,7 +214,7 @@ export const registration = async (req, res) => {
         return res.status(400).json({ message: "Invalid Link" });
       }
       await Artist.updateOne({ _id: artist._id }, { $set: { is_verfied: true } });
-      await token.deleteOne({ token: req.params.token });
+      await Token.deleteOne({ token: req.params.token });
       res.status(200).json({ message: "Email is verified Succesfully" });
     } catch (error) {
       console.log(error);

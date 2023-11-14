@@ -188,13 +188,9 @@ export const payment = async (req, res, next) => {
       process.env.STRIPE_SECRET_KEY
     );
     const artist = await Artist.findById(req.params.id);
-      const wallet=req.params.wallet
+    let artistFees = artist.fees*req.params.total;
 
-    let artistFees = (artist.fees*req.params.total)-wallet;
-      if(artistFees==0){
-        artistFees=1
-      }
-
+    
     const paymentintent = await stripe.paymentIntents.create({
       amount: artistFees * 100,
       currency: "inr",
@@ -308,6 +304,50 @@ export const userwallet = async (req, res) => {
 
     const user=await User.findOne({_id:decoded.userId})
     return res.status(200).json({user})
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export const walletPay = async (req, res) => {
+  try {
+
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWTUSERKEY);
+
+    const { id,ToDate,fromDate, totalDays,fees } = req.body;
+    console.log(req.body);
+    
+    const userId = decoded.userId;
+    const totalPaid= totalDays*fees
+
+    const newBooking = new Booking({
+      artistId: id,
+      userId: userId,
+      toDate: moment(ToDate).format("DD-MM-YYYY"),
+      fromDate: moment(fromDate).format("DD-MM-YYYY"),
+      totalDays,
+      totalAmount:totalPaid
+    });
+
+    const bookingSaved = await newBooking.save();
+    if(!bookingSaved){
+        return res.status(400).json({message:"booking not done something Went wrong"})
+    }
+      const walletUpdate=await User.findOneAndUpdate({_id:decoded.userId},{$set:{wallet:0}})
+      if(!walletUpdate){
+        return res.status(400).json({message:"booking not done something Went wrong"})
+    }
+
+    const artistBookings = await Artist.findOne({ _id: id });
+    artistBookings.bookingsPending.push(bookingSaved._id);
+    await artistBookings.save();
+
+    return res
+      .status(200)
+      .json({payment:true, message: "Slot Booked, wait for artist confirmation" });
     
   } catch (error) {
     console.log(error);
