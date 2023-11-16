@@ -139,7 +139,7 @@ export const DateCheck = async (req, res) => {
               fromDate: { $gte: fromDate, $lte: toDate },
             },
             {
-              $or: [{ status: "Pending" }, { status: "Success" }],
+              $or: [{ status: "Pending" }, { status: "Approved" }],
             },
           ],
         },
@@ -150,7 +150,7 @@ export const DateCheck = async (req, res) => {
               toDate: { $gt: toDate },
             },
             {
-              $or: [{ status: "Pending" }, { status: "Success" }],
+              $or: [{ status: "Pending" }, { status: "Approved" }],
             },
           ],
         },
@@ -161,7 +161,7 @@ export const DateCheck = async (req, res) => {
               toDate: { $gte: toDate },
             },
             {
-              $or: [{ status: "Pending" }, { status: "Success" }],
+              $or: [{ status: "Pending" }, { status: "Approved" }],
             },
           ],
         },

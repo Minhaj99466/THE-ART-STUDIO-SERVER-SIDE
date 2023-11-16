@@ -6,6 +6,10 @@ import {
 import Artist from "../../Model/artistModel.js";
 import Chat from "../../Model/chatModel.js";
 import User from "../../Model/userModel.js";
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import Booking from "../../Model/bookingModel.js";
+
 
 
 
@@ -189,6 +193,106 @@ export const searchUsers = async (req, res) => {
 
     const users = await User.find(keyword); //.find({ _id: { $ne: req.user._id } });
     res.status(200).json(users);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const dashBoard = async (req, res) => {
+  try {
+    let token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWTARTISTKEY);
+    
+    
+    const pipeline = [
+      { $match: { artistId: new mongoose.Types.ObjectId(decoded.artistId) } },
+      {
+        $group: {
+          _id: null,
+
+          BookingCount: {
+            $sum: {
+              $cond: { if: { $eq: ["$status", "Approved"] }, then: 1, else: 0 },
+            },
+          },
+          canceledCount: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$status", "Rejected"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+          PendingCount: {
+            $sum: {
+              $cond: {
+                if: { $eq: ["$status", "Pending"] },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+    ];
+    const result = await Booking.aggregate(pipeline);
+    console.log(result,"res");
+    let patientsCount = 0;
+
+    const users = await Booking.aggregate([
+      { $match: { artistId: new mongoose.Types.ObjectId(decoded.artistId) } },
+      {
+        $group: {
+          _id: null,
+          userCount: { $addToSet: '$userId' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          userCount: { $size: '$userCount' }
+        }
+      }
+    ]);
+    console.log(users,"userssssssssss");
+
+     if (users[0]) {
+      patientsCount = users[0].userCount;                    
+    }
+    const { BookingCount, canceledCount, PendingCount } = result[0] || {
+      BookingCount: 0,
+      canceledCount: 0,
+      PendingCount: 0,
+    };
+
+    const totalApprovedAmount = await Booking.aggregate([
+      {
+        $match: {
+          artistId: new mongoose.Types.ObjectId(decoded.artistId),
+          status: "Approved"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: { $toDouble: "$totalAmount" } }
+        }
+      }
+    ]);
+
+    const totalSales=totalApprovedAmount[0].totalAmount
+    
+    const total = BookingCount + canceledCount + PendingCount;
+    let artist = await Artist.findOne({ _id: decoded.artistId });
+    res.json({
+      BookingCount,
+      canceledCount,
+      PendingCount,
+      total,
+      patientsCount,
+      totalSales
+    });
   } catch (error) {
     console.log(error.message);
   }

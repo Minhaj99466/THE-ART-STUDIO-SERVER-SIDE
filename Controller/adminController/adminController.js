@@ -3,6 +3,7 @@ import Artist from "../../Model/artistModel.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import Booking from "../../Model/bookingModel.js";
 
 export const login = async (req, res) => {
   try {
@@ -179,3 +180,64 @@ export const verifyArtist = async (req, res, next) => {
     console.log(error.message);
   }
 };
+
+export const dashBoardData = async (req, res, next) => {
+  try {
+    
+    const [totalUsers, totalArtists] = await Promise.all([
+      User.countDocuments(),
+      Artist.countDocuments(),
+    ]);
+
+    console.log(totalUsers,"usersssssssssss");
+    console.log(totalArtists,"docrssssssssss");
+
+    const artistBookings = await Booking.aggregate([
+      {
+        $match: {
+          status: "Approved", 
+        },
+      },
+      {
+        $group: {
+          _id: '$artistId',
+          bookingCount: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: 'artists', 
+          localField: '_id',
+          foreignField: '_id',
+          as: 'artistInfo',
+        },
+      },
+      {
+        $unwind: '$artistInfo',
+      },
+      {
+        $project: {
+          artistName: '$artistInfo.name',
+          bookingCount: 1,
+        },
+      }, {
+        $sort: {
+          bookingCount: -1, 
+        },
+      },
+    ]);
+    console.log(artistBookings);
+
+    const totalBookings=await Booking.find({status:"Approved"})
+    const TotalBookingCount=totalBookings.length
+
+    return res.status(200).json({ totalUsers, totalArtists,artistBookings,TotalBookingCount});
+
+
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+

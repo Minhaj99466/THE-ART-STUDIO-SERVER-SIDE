@@ -2,7 +2,7 @@ import express from 'express'
 
 
 const artistRoute=express()
-import { profileDetails,addProfile,editProfile,postImages, fetchChats, searchUsers  } from '../../Controller/artistController/artistController.js'
+import { profileDetails,addProfile,editProfile,postImages, fetchChats, searchUsers,dashBoard  } from '../../Controller/artistController/artistController.js'
 
 import upload from '../../MiddleWares/multer.js'
 import { artistLogin,artistGoogleLogin, checkpassword, googleRegister, passwordMail, registration, verification } from '../../Controller/artistController/authController.js'
@@ -42,6 +42,7 @@ artistRoute.get('/fetchchat/:userId',fetchChats)
 artistRoute.get('/usersearch',searchUsers)
 artistRoute.post('/message',artistMessage)
 
+artistRoute.get('/dashboard',dashBoard)
 
 
 

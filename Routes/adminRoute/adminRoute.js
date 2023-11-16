@@ -1,7 +1,7 @@
 import express from 'express'
 
 const adminRoute=express()
-import { login,manageUsers,manageAction,manageArtist,manageArtistAction,notVerified,verifyArtist, getArtist } from '../../Controller/adminController/adminController.js'
+import { login,manageUsers,manageAction,manageArtist,manageArtistAction,notVerified,verifyArtist, getArtist,dashBoardData } from '../../Controller/adminController/adminController.js'
 import { adminAuth } from '../../MiddleWares/Auth.js'
 
 
@@ -13,6 +13,8 @@ adminRoute.patch('/admin/manageartist',adminAuth,manageArtistAction)
 adminRoute.get("/getArtist/:id",adminAuth,getArtist);
 adminRoute.get("/notVerified",adminAuth,notVerified);
 adminRoute.put("/verify/:id",adminAuth,verifyArtist);
+
+adminRoute.get("/dashboard",adminAuth,dashBoardData);
 
 
 export default adminRoute
