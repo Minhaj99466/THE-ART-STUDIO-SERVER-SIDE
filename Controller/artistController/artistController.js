@@ -283,7 +283,7 @@ export const dashBoard = async (req, res) => {
     if(totalApprovedAmount.length>0){
       const totalSales=totalApprovedAmount[0].totalAmount
     }else{
-      totalSales=0
+      const totalSales=0
     }
     
     const total = BookingCount + canceledCount + PendingCount;
