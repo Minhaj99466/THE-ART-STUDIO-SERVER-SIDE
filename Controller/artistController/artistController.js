@@ -150,7 +150,7 @@ console.log(error);
 
 export const fetchChats = async (req, res) => {
   try {
-    console.log("reached","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     const  userId  = req.params.userId;
     // console.log(req.params,"artistId");
     console.log(userId);

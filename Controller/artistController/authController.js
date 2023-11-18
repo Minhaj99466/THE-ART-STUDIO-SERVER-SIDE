@@ -83,6 +83,7 @@ export const registration = async (req, res) => {
     try {
       const { email, password } = req.body;
       const exist = await Artist.findOne({ email: email });
+      console.log(exist,"Exist");
       if (exist) {
         if (exist.is_block === true) {
           return res.status(200).json({ message: "Artist Is Blocked By Admin" });

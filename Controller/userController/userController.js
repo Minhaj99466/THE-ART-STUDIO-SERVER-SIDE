@@ -252,7 +252,7 @@ export const cancelBooking = async (req, res) => {
 export const fetchChats = async (req, res) => {
   try {
     const { userId } = req.params;
-    // console.log(userId,"fetchData Param Console");
+    console.log(userId,"fetchData Param Console");
     const result = await Chat.find({ "users.user": userId })
       .populate("users.user", "-password")
       .populate("users.artist", "-password")

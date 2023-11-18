@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors(
     ({
-        origin:[process.env.CLIENTADDRESS,'http://localhost:5173'],
+        origin:[process.env.CLIENTADDRESS,'http://localhost:5173/'],
         methods:["GET","POST","PUT","PATCH"],
         credentials:true
     })
@@ -46,12 +46,11 @@ const server=app.listen(process.env.port,()=>{
 const io = new Server(server, {
     pingTimeout: 60000,
     cors: {
-      origin: ['http://localhost:5173',process.env.CLIENTADDRESS]
+      origin: ['http://localhost:5173']
     }
   });
   io.on("connection",(socket)=>{
     console.log('connected to socket.io');
-  
     socket.on("setup",(userData)=>{
       socket.join(userData._id)
       socket.emit('connected')

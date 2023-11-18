@@ -5,7 +5,7 @@ import User from "../../Model/userModel.js";
 export const accessChat = async (req, res) => {
   console.log("inside access chat");
   const { userId, artistId } = req.body;
-  console.log(userId, artistId);
+  console.log(userId,"UserIDDDD", artistId,"ArtistIDDDDDD");
 
   if (!artistId) {
     console.log("User not found");
@@ -21,7 +21,7 @@ export const accessChat = async (req, res) => {
       .populate("users.user", "-password") // Populate the "user" references
       .populate("users.artist", "-password") // Populate the "doctor" references
       .populate("latestMessage");
-    console.log(isChat);
+    console.log(isChat,"isCha");
     // If a chat exists, send it
     if (isChat) {
       console.log(isChat);
@@ -143,7 +143,6 @@ export const sendMessage = async (req, res) => {
   };
   export const allMessages=async(req,res)=>{
     try {
-      console.log("All Message Controller");
         const message=await Message.find({chat:req.params.chatId}).populate('sender.user','name email').populate('sender.artist', 'name')
         res.json(message)
     } catch (error) {
