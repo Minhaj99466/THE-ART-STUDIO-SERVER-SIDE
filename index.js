@@ -9,7 +9,7 @@ import { Server } from 'socket.io';
 
 
 import userRoute from './Routes/userRoute/userRoute.js'
-import artistRoute from './Routes/artistRoute/ArtistRoute.js'
+import artistRoute from './Routes/artistRoute/artistRoute.js'
 import adminRoute from './Routes/adminRoute/adminRoute.js'
 
 
@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors(
     ({
-        origin:['http://localhost:5173'],
+        origin:[process.env.CLIENTADDRESS],
         methods:["GET","POST","PUT","PATCH"],
         credentials:true
     })
@@ -53,7 +53,6 @@ const io = new Server(server, {
     console.log('connected to socket.io');
   
     socket.on("setup",(userData)=>{
-        console.log(userData,"lllllllllllllllllllllllllllllllllllllllll");
       socket.join(userData._id)
       socket.emit('connected')
     })

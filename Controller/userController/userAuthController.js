@@ -48,7 +48,7 @@ export const googleRegister = async (req, res) => {
     if (exist) {
       return res
         .status(400)
-        .json({ created: false, message: "Email already exist" });
+        .json({ created: false, message: "Email  already exist" });
     } else {
       const hashpass = await bcrypt.hash(id, 10);
       const newUser = new User({

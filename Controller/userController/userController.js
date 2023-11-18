@@ -260,7 +260,7 @@ export const fetchChats = async (req, res) => {
       .populate({
         path: "latestMessage",
         populate: {
-          path: "sender.doctor" ? "sender.artist" : "sender.user",
+          path: "sender.artist" ? "sender.artist" : "sender.user",
           select: "-password",
         },
       })
