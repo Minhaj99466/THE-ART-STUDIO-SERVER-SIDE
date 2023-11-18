@@ -280,8 +280,9 @@ export const dashBoard = async (req, res) => {
         }
       }
     ]);
-
-    const totalSales=totalApprovedAmount[0].totalAmount
+    if(totalApprovedAmount.length>0){
+      const totalSales=totalApprovedAmount[0].totalAmount
+    }
     
     const total = BookingCount + canceledCount + PendingCount;
     let artist = await Artist.findOne({ _id: decoded.artistId });

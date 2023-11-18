@@ -9,7 +9,7 @@ const sendMail=async(email,subject,text)=>{
             secure:false,
             requireTLS:true,
             auth:{
-                user:process.env.USER,
+                user:"minhaj99466@gmail.com",
                 pass:process.env.PASS
             }
         })
