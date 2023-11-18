@@ -9,7 +9,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const admin = await User.findOne({ email: email,is_admin:true });
+    const admin = await User.findOne({ email: email, is_admin: true });
     if (!admin) {
       res.status(201).json({ loginSuccess: false, message: "Admin not Found" });
     }
@@ -47,7 +47,6 @@ export const login = async (req, res) => {
 
 export const manageUsers = async (req, res) => {
   try {
-
     const search = req.params.search;
     const value = req.params.value;
 
@@ -66,7 +65,6 @@ export const manageUsers = async (req, res) => {
     const totalPages = Math.ceil(totalUser / userPerPage);
 
     return res.status(200).json({ users, totalPages });
-
   } catch (error) {
     console.log(error);
   }
@@ -88,7 +86,6 @@ export const manageArtist = async (req, res) => {
     const artist = await Artist.find(query).skip(page).limit(6);
     const artistsPerPage = 6;
     const totalPages = Math.ceil(totalArtists / artistsPerPage);
-
 
     return res.status(200).json({ artist, totalPages });
   } catch (error) {
@@ -183,61 +180,58 @@ export const verifyArtist = async (req, res, next) => {
 
 export const dashBoardData = async (req, res, next) => {
   try {
-    
     const [totalUsers, totalArtists] = await Promise.all([
       User.countDocuments(),
       Artist.countDocuments(),
     ]);
 
-    console.log(totalUsers,"usersssssssssss");
-    console.log(totalArtists,"docrssssssssss");
+    console.log(totalUsers, "usersssssssssss");
+    console.log(totalArtists, "docrssssssssss");
 
     const artistBookings = await Booking.aggregate([
       {
         $match: {
-          status: "Approved", 
+          status: "Approved",
         },
       },
       {
         $group: {
-          _id: '$artistId',
+          _id: "$artistId",
           bookingCount: { $sum: 1 },
         },
       },
       {
         $lookup: {
-          from: 'artists', 
-          localField: '_id',
-          foreignField: '_id',
-          as: 'artistInfo',
+          from: "artists",
+          localField: "_id",
+          foreignField: "_id",
+          as: "artistInfo",
         },
       },
       {
-        $unwind: '$artistInfo',
+        $unwind: "$artistInfo",
       },
       {
         $project: {
-          artistName: '$artistInfo.name',
+          artistName: "$artistInfo.name",
           bookingCount: 1,
         },
-      }, {
+      },
+      {
         $sort: {
-          bookingCount: -1, 
+          bookingCount: -1,
         },
       },
     ]);
     console.log(artistBookings);
 
-    const totalBookings=await Booking.find({status:"Approved"})
-    const TotalBookingCount=totalBookings.length
+    const totalBookings = await Booking.find({ status: "Approved" });
+    const TotalBookingCount = totalBookings.length;
 
-    return res.status(200).json({ totalUsers, totalArtists,artistBookings,TotalBookingCount});
-
-
-
-
+    return res
+      .status(200)
+      .json({ totalUsers, totalArtists, artistBookings, TotalBookingCount });
   } catch (error) {
     console.log(error.message);
   }
 };
-

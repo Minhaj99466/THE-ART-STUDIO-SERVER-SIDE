@@ -82,23 +82,6 @@ export const userLogin = async (req, res) => {
       }
       const passOk = await bcrypt.compare(password, exist.password);
       if (passOk) {
-        if (!exist.is_verfied) {
-          const token = await Token.findOne({ userId: exist.id });
-          if (token) {
-            return res.status(200).json({
-              message: "We Already sent mail  Please Check Your Mail",
-            });
-          }
-          const emailToken = await new Token({
-            userId: exist.id,
-            token: crypto.randomBytes(32).toString("hex"),
-          }).save();
-          const url = `${process.env.BASE_URL}users/${exist._id}/verify/${emailToken.token}`;
-          await sendMail(exist.email, "Verify Email", url);
-          return res
-            .status(200)
-            .json({ message: "An Email SEnt To your account Please verify" });
-        }
         const token = jwt.sign({ userId: exist._id }, process.env.JWTUSERKEY, {
           expiresIn: "24h",
         });
