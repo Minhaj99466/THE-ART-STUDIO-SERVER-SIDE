@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors(
     ({
-        origin:[process.env.CLIENTADDRESS],
+        origin:[process.env.CLIENTADDRESS,'http://localhost:5173'],
         methods:["GET","POST","PUT","PATCH"],
         credentials:true
     })
@@ -46,7 +46,7 @@ const server=app.listen(process.env.port,()=>{
 const io = new Server(server, {
     pingTimeout: 60000,
     cors: {
-      origin: ['http://localhost:5173']
+      origin: ['http://localhost:5173',process.env.CLIENTADDRESS]
     }
   });
   io.on("connection",(socket)=>{
