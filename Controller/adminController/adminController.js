@@ -132,11 +132,11 @@ export const notVerified = async (req, res, next) => {
       is_Confirm: false,
       requested: true,
     });
-    if (notVerified) {
-      return res.status(200).json({ data: notVerified });
-    } else {
+    if(!notVerified) {
       return res.status(200).json({ message: "Data not found" });
     }
+    return res.status(200).json({ data:notVerified});
+
   } catch (error) {
     console.log(error.message);
   }

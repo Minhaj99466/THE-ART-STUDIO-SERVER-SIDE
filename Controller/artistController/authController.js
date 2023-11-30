@@ -37,7 +37,7 @@ export const registration = async (req, res) => {
           .status(200)
           .json({
             created: true,
-            message: "An Email SEnt To your account Please verify",
+            message: "Email Sent To your account Please verify",
           });
       }
     } catch (error) {
